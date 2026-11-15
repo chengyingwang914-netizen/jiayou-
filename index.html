@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="zh"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>关于我，也关于想遇见的你</title>
+<style>
+  :root { --paper:#fffdf6; --ink:#3a352f; --mute:#9b9183; --line:#dfe7ee; --red:#c0573f; --hl:#ffe08a; --green:#4f6b48; --orange:#e0915b; }
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html { scroll-behavior:smooth; }
+  body { background:#e9e4da; color:var(--ink); font-family:"Kaiti SC","STKaiti","KaiTi","楷体",serif; font-size:17px; line-height:32px; transition:padding .3s; }
+  .wrap { max-width:480px; margin:0 auto; padding:24px 14px 60px; }
+  .em { color:var(--red); }
+  .wavy { text-decoration:underline wavy var(--orange); text-underline-offset:5px; }
+
+  /* 封面 */
+  #cover { position:fixed; inset:0; z-index:50; display:flex; align-items:center; justify-content:center; background:#e9e4da; perspective:1600px; }
+  .book { width:min(82vw,360px); height:min(115vw,500px); position:relative; transform-style:preserve-3d; transition:transform 1.1s cubic-bezier(.6,.1,.3,1); transform-origin:left center; cursor:pointer;
+    background:linear-gradient(135deg,#6f8f6a,#4f6b48); border-radius:6px 14px 14px 6px; box-shadow:inset 10px 0 18px rgba(0,0,0,.25), 0 14px 30px rgba(0,0,0,.25); color:#fffdf6; padding:44px 30px; }
+  .book .label { background:#fffdf6; color:var(--ink); border-radius:6px; padding:16px; text-align:center; box-shadow:0 2px 6px rgba(0,0,0,.2); }
+  .book .label b { display:block; font-size:22px; line-height:34px; }
+  .book .label small { display:block; color:var(--mute); font-size:14px; line-height:22px; }
+  .book .hint { position:absolute; bottom:34px; left:0; right:0; text-align:center; font-size:15px; animation:breathe 1.8s infinite; }
+  .book .stk { position:absolute; font-size:28px; }
+  .ph.round { width:110px; height:110px; border-radius:50%; margin:0 auto 12px; border:4px solid #fffdf6; box-shadow:0 3px 8px rgba(0,0,0,.25); }
+  #cover.open .book { transform:rotateY(-110deg); }
+  #cover.gone { opacity:0; pointer-events:none; transition:opacity .4s .7s; }
+  @keyframes breathe { 50% { opacity:.4; } }
+
+  /* 纸张 */
+  .paper { position:relative; background:var(--paper); border-radius:6px; padding:56px 20px 30px 46px; margin-bottom:26px;
+    background-image:repeating-linear-gradient(transparent 0 31px, var(--line) 31px 32px); background-position:0 56px;
+    box-shadow:0 2px 0 #f3eee2, 0 4px 0 #ebe5d6, 0 6px 14px rgba(0,0,0,.1);
+    opacity:0; transform:translateY(30px); transition:opacity .7s, transform .7s; }
+  .paper.show { opacity:1; transform:none; }
+  .paper::before { content:""; position:absolute; top:0; bottom:0; left:32px; border-left:2px solid #f2b8b5; }
+  .rings { position:absolute; top:-10px; left:0; right:0; display:flex; justify-content:space-around; padding:0 20px; }
+  .rings i { width:10px; height:26px; border-radius:5px; background:linear-gradient(90deg,#9a9a9a,#eee,#8d8d8d); }
+  .pageno { position:absolute; top:20px; right:18px; font-size:13px; color:var(--mute); }
+  h2 { font-size:22px; display:inline-block; margin-bottom:8px; padding:0 4px; background:linear-gradient(transparent 58%, var(--hl) 58% 90%, transparent 90%); }
+  h2::before { content:"✦ "; color:var(--orange); }
+  p { text-align:justify; }
+  .small { font-size:15px; line-height:26px; }
+  .muted { color:var(--mute); }
+  .tip { font-size:13px; color:var(--mute); line-height:22px; margin:6px 0; }
+  .tip::before { content:"👆 "; }
+  .gap { height:16px; }
+
+  .id { display:grid; grid-template-columns:auto 1fr; gap:0 12px; border:1.5px dashed #c9a27a; border-radius:8px; padding:8px 12px; background:rgba(255,255,255,.6); margin:4px 0 10px; }
+  .id .l { color:var(--mute); }
+
+  .tags { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin:6px 0; }
+  .flip { height:76px; perspective:600px; cursor:pointer; }
+  .flip .in { position:relative; width:100%; height:100%; transition:transform .5s; transform-style:preserve-3d; }
+  .flip.on .in { transform:rotateY(180deg); }
+  .flip .f, .flip .b { position:absolute; inset:0; backface-visibility:hidden; border-radius:10px; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; line-height:20px; }
+  .flip .f { background:#fff4e2; border:1.5px solid #f0d3a8; font-size:15px; }
+  .flip .f em { font-style:normal; font-size:26px; line-height:32px; }
+  .flip .b { background:#4f6b48; color:#fffdf6; transform:rotateY(180deg); font-size:13px; padding:6px; }
+
+  /* 照片 */
+  .ph { position:relative; overflow:hidden; background:#f1ebe0; }
+  .ph img { width:100%; height:100%; object-fit:cover; display:block; }
+  .gallery { display:flex; justify-content:center; gap:4px; margin:14px 0 6px; }
+  .polaroid { background:#fff; padding:6px 6px 0; box-shadow:0 3px 8px rgba(0,0,0,.15); width:31%; text-align:center; position:relative; }
+  .polaroid:nth-child(1) { transform:rotate(-4deg); } .polaroid:nth-child(2) { transform:rotate(2deg) translateY(6px); } .polaroid:nth-child(3) { transform:rotate(-1.5deg); }
+  .polaroid .ph { aspect-ratio:1; }
+  .polaroid .cap { font-size:13px; line-height:26px; color:var(--mute); min-height:26px; }
+  .polaroid::before { content:""; position:absolute; top:-8px; left:50%; width:44px; height:16px; margin-left:-22px; background:rgba(255,214,140,.6); transform:rotate(-3deg); z-index:1; }
+  .polaroid.big { width:72%; margin:10px auto 6px; transform:rotate(-2deg); padding:8px 8px 0; }
+  .polaroid.big .ph { aspect-ratio:4/3; }
+
+  .mbti { display:flex; align-items:center; gap:10px; margin:6px 0; }
+  .mbti .code { font-family:Georgia,serif; font-size:30px; letter-spacing:4px; color:var(--green); cursor:pointer; user-select:none; transition:transform .4s; }
+  .mbti .code.spin { transform:rotateX(360deg); }
+  .mbti .code b { color:var(--red); font-weight:normal; }
+  .mbti small { font-size:13px; line-height:20px; color:var(--mute); }
+
+  .deck { position:relative; height:118px; margin:8px 0; cursor:pointer; }
+  .card { position:absolute; inset:0; background:#fff; border-radius:12px; border:1.5px solid #e6dccb; padding:14px 16px; display:flex; flex-direction:column; justify-content:center; box-shadow:0 3px 8px rgba(0,0,0,.08); transition:transform .45s, opacity .45s; }
+  .card .k { font-size:12px; color:var(--orange); line-height:18px; }
+  .card .q { font-size:17px; line-height:26px; }
+  .card.out { transform:translateX(120%) rotate(18deg); opacity:0; }
+  .deck::after { content:""; position:absolute; inset:6px -4px -6px 4px; background:#f6efe2; border-radius:12px; z-index:-1; }
+
+  .map { position:relative; height:150px; margin:8px 0; background:rgba(255,255,255,.55); border-radius:10px; border:1.5px dashed #c9d6c4; }
+  .map svg { position:absolute; inset:0; width:100%; height:100%; }
+  .city { position:absolute; font-size:14px; line-height:18px; transform:translate(-50%,-50%); text-align:center; white-space:nowrap; }
+  .city i { display:block; width:10px; height:10px; border-radius:50%; margin:0 auto 2px; background:var(--red); }
+  .city.q i { background:#bbb; }
+  .dash { stroke-dasharray:6 6; animation:dash 1.2s linear infinite; }
+  @keyframes dash { to { stroke-dashoffset:-12; } }
+
+  .check label { display:flex; gap:8px; align-items:center; cursor:pointer; }
+  .check input { display:none; }
+  .check .box { width:18px; height:18px; border:1.8px solid var(--ink); border-radius:4px; flex:none; position:relative; }
+  .check input:checked + .box::after { content:"✓"; position:absolute; left:1px; top:-9px; font-size:22px; color:var(--red); }
+  .check input:checked ~ .t { color:var(--mute); text-decoration:line-through wavy var(--orange); }
+  .reward { max-height:0; overflow:hidden; transition:max-height .6s; color:var(--green); }
+  .reward.on { max-height:140px; }
+
+  .kitchen { background:#fff8ec; border-radius:12px; padding:10px 14px; margin:8px 0; border:1.5px solid #f0d3a8; }
+  .scene { display:flex; justify-content:space-between; align-items:flex-end; font-size:34px; line-height:44px; }
+  .bubble { font-size:14px; line-height:20px; background:#fff; border:1px solid #e6dccb; border-radius:10px; padding:4px 8px; max-width:62%; min-height:28px; transition:opacity .3s; }
+  .pan { display:inline-block; animation:shake .6s infinite; }
+  @keyframes shake { 50% { transform:rotate(-12deg) translateY(-3px); } }
+  .btn { display:inline-block; border:none; font:inherit; font-size:15px; line-height:20px; background:var(--green); color:#fff; padding:8px 14px; border-radius:20px; cursor:pointer; margin-top:6px; }
+  .btn.alt { background:var(--orange); }
+  .dish { font-size:20px; color:var(--red); min-height:32px; }
+
+  .switch { display:flex; background:#efe8da; border-radius:22px; padding:3px; margin:8px 0; position:relative; cursor:pointer; user-select:none; }
+  .switch span { flex:1; text-align:center; font-size:15px; z-index:1; }
+  .switch .knob { position:absolute; top:3px; bottom:3px; left:3px; width:calc(50% - 3px); background:#fff; border-radius:20px; box-shadow:0 1px 3px rgba(0,0,0,.15); transition:left .35s; }
+  .switch.r .knob { left:50%; }
+  .sw-out { min-height:64px; font-size:16px; }
+
+  .rule { position:relative; padding-right:42px; cursor:pointer; margin-bottom:4px; }
+  .rule .stamp { position:absolute; right:0; top:2px; font-size:12px; line-height:14px; color:var(--red); border:2px solid var(--red); border-radius:50%; width:38px; height:38px; display:flex; align-items:center; justify-content:center; text-align:center; transform:scale(2) rotate(-20deg); opacity:0; transition:all .25s cubic-bezier(.3,1.6,.5,1); }
+  .rule.on .stamp { transform:scale(1) rotate(-14deg); opacity:.85; }
+
+  .quote { border-left:4px solid #a8c3a0; padding-left:12px; color:var(--green); margin:8px 0; }
+  .end { text-align:center; margin-top:10px; }
+  .contact { max-height:0; overflow:hidden; transition:max-height .6s; text-align:center; }
+  .contact.on { max-height:220px; }
+  .contact .c { display:inline-block; margin-top:8px; background:#fff; border:1.5px dashed var(--red); border-radius:10px; padding:6px 14px; color:var(--red); }
+  .heart { position:fixed; pointer-events:none; font-size:20px; animation:float 1.4s ease-out forwards; z-index:60; }
+  @keyframes float { to { transform:translateY(-120px) scale(1.6); opacity:0; } }
+  .foot { text-align:center; color:var(--mute); font-size:13px; }
+  .eggcat { position:absolute; right:14px; bottom:10px; font-size:24px; cursor:pointer; }
+
+  /* 查看模式：没放照片的位置直接隐藏 */
+  body:not(.editing) .ph.empty, body:not(.editing) .polaroid.empty { display:none; }
+
+  /* ================= 编辑模式 ================= */
+  body.editing { padding-top:52px; }
+  body.editing #cover { position:relative; inset:auto; padding:20px 0 30px; background:none; z-index:1; }
+  body.editing .book { cursor:default; }
+  body.editing .paper { opacity:1; transform:none; }
+  body.editing [contenteditable] { outline:1.5px dashed rgba(224,145,91,.55); outline-offset:2px; border-radius:3px; cursor:text; min-width:1em; }
+  body.editing [contenteditable]:hover { background:rgba(255,224,138,.25); }
+  body.editing [contenteditable]:focus { outline:2px solid var(--orange); background:rgba(255,255,255,.7); }
+  body.editing .book [contenteditable]:hover { background:rgba(255,255,255,.15); }
+  body.editing .ph { cursor:pointer; }
+  body.editing .ph.empty::after { content:"📷 点击放照片"; position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-size:12px; color:var(--mute); text-align:center; border:1.5px dashed #c9a27a; }
+  body.editing .ph.round.empty::after { border-radius:50%; }
+  .ph .x { position:absolute; top:3px; right:3px; width:22px; height:22px; border-radius:50%; background:rgba(0,0,0,.55); color:#fff; font-size:13px; line-height:22px; text-align:center; display:none; }
+  body.editing .ph:not(.empty) .x { display:block; }
+  body.editing .from-panel { outline:1.5px dashed rgba(79,107,72,.5); outline-offset:3px; border-radius:6px; }
+
+  .ed-bar { position:fixed; top:0; left:0; right:0; z-index:100; background:#3a352f; color:#fff; display:flex; gap:6px; align-items:center; padding:8px 10px; font-family:system-ui,"Microsoft YaHei",sans-serif; font-size:13px; line-height:20px; overflow-x:auto; }
+  .ed-bar b { margin-right:auto; white-space:nowrap; }
+  .ed-bar button { font:inherit; border:none; border-radius:16px; padding:6px 12px; cursor:pointer; white-space:nowrap; background:#5a534a; color:#fff; }
+  .ed-bar button.pri { background:var(--orange); }
+  .ed-panel { position:fixed; z-index:99; background:#fff; font-family:system-ui,"Microsoft YaHei",sans-serif; font-size:13px; line-height:20px; color:#333; overflow-y:auto; box-shadow:0 0 20px rgba(0,0,0,.2); transition:transform .3s; padding:14px 14px 40px;
+    left:0; right:0; bottom:0; height:52vh; border-radius:14px 14px 0 0; transform:translateY(105%); }
+  .ed-panel.on { transform:none; }
+  @media (min-width:900px) {
+    .ed-panel { left:auto; top:44px; width:400px; height:auto; border-radius:0; transform:translateX(105%); }
+    body.panel-on { padding-right:400px; }
+  }
+  .ed-panel h4 { font-size:14px; margin:14px 0 4px; color:var(--green); }
+  .ed-panel .hint { color:#999; font-size:12px; margin-bottom:4px; }
+  .ed-panel textarea, .ed-panel input { width:100%; font:inherit; font-size:13px; border:1px solid #ddd; border-radius:6px; padding:6px 8px; resize:vertical; }
+  .ed-panel textarea:focus, .ed-panel input:focus { outline:2px solid var(--orange); border-color:transparent; }
+  .ed-panel .row { display:grid; grid-template-columns:1fr 1fr; gap:6px; }
+  .ed-panel .guide { background:#fff8ec; border-radius:8px; padding:8px 10px; color:#7a6a55; }
+  .toast { position:fixed; left:50%; bottom:30px; transform:translateX(-50%); background:rgba(0,0,0,.78); color:#fff; padding:8px 16px; border-radius:20px; z-index:200; font-family:system-ui,"Microsoft YaHei",sans-serif; font-size:13px; }
+</style>
+</head>
+<body class="">
+
+<div id="cover">
+  <div class="book" id="book">
+    <span class="stk" style="top:12px;right:14px">🐱</span>
+    <span class="stk" style="bottom:84px;left:22px;font-size:22px">🥾</span>
+    <span class="stk" style="bottom:100px;right:28px;font-size:20px">📖</span>
+    <div class="ph round empty" data-photo="cover"></div>
+    <div class="label"><b data-k="coverTitle">关于我，<br>也关于想遇见的你</b><small data-k="coverSub">一本可以点着玩的交友手账</small></div>
+    <div class="hint" data-k="coverHint">轻点，翻开本子 →</div>
+  </div>
+</div>
+
+<div class="wrap">
+  <section class="paper">
+    <div class="rings"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <div class="pageno">P.01</div>
+    <h2 data-k="h1">关于我</h2>
+    <div class="id" id="profile"><span class="l" data-li="profile|0|0">年龄</span><span data-li="profile|0|1">40 岁</span><span class="l" data-li="profile|1|0">性别</span><span data-li="profile|1|1">女 · <span class="em">已出柜</span></span><span class="l" data-li="profile|2|0">婚姻</span><span data-li="profile|2|1">未婚，也没有结婚的打算</span><span class="l" data-li="profile|3|0">坐标</span><span data-li="profile|3|1">北京</span></div>
+    <p data-k="intro">有一份认真对待的工作，也有自己喜欢的生活。对新鲜事物始终保持好奇心，喜欢探索，也喜欢思考。以前喜欢手工制作，现在也会拿AI做了一些小物件，语音体或者个人小程序。纯属兴趣爱好， 介意请绕行。下面每张牌要不要 翻开看看？</p>
+    <div class="tip" data-k="tipTags">翻开每张牌看看</div>
+    <div class="tags" id="tags"><div class="flip"><div class="in"><div class="f"><em>🐱</em><span data-li="tags|0|1">猫</span></div><div class="b"><span data-li="tags|0|2">你也是猫派吗？<br>先给我看看你的猫</span></div></div></div><div class="flip"><div class="in"><div class="f"><em>🏋️</em><span data-li="tags|1|1">健身</span></div><div class="b"><span data-li="tags|1|2">可以一起练，<br>也可以互相监督</span></div></div></div><div class="flip"><div class="in"><div class="f"><em>🥾</em><span data-li="tags|2|1">徒步</span></div><div class="b"><span data-li="tags|2|2">走着走着，<br>话就聊开了</span></div></div></div><div class="flip"><div class="in"><div class="f"><em>📖</em><span data-li="tags|3|1">阅读</span></div><div class="b"><span data-li="tags|3|2">告诉我你<br>最近在读什么</span></div></div></div><div class="flip"><div class="in"><div class="f"><em>✈️</em><span data-li="tags|4|1">旅行</span></div><div class="b"><span data-li="tags|4|2">下一站去哪，<br>可以一起商量</span></div></div></div><div class="flip"><div class="in"><div class="f"><em>✨</em><span data-li="tags|5|1">好奇心</span></div><div class="b"><span data-li="tags|5|2">对新鲜事物<br>永远想试试</span></div></div></div></div>
+    <div class="gallery" id="gallery">
+      <div class="polaroid empty"><div class="ph empty" data-photo="g1"></div><div class="cap" data-k="g1c">照片说明</div></div>
+      <div class="polaroid empty"><div class="ph empty" data-photo="g2"></div><div class="cap" data-k="g2c">照片说明</div></div>
+      <div class="polaroid empty"><div class="ph empty" data-photo="g3"></div><div class="cap" data-k="g3c">照片说明</div></div>
+    </div>
+    <div class="gap"></div>
+    <p data-k="persona">性格独立，理性与感性并存，做事认真负责。底色善良。</p>
+    <div class="mbti from-panel">
+      <div class="code" id="mbti"><b>E</b>NTJ</div>
+      <small id="mbtiTxt">一年前测的。<br>点一下看看现在 →</small>
+    </div>
+    <p class="small muted" data-k="mbtiNote">这类测试只是某个阶段的性格画像，人在不同关系中，本来就会呈现不同的侧面。</p>
+    <div class="gap"></div>
+    <p data-k="talkP">喜欢长谈，也喜欢听别人讲故事。话题可以从追星聊到人生，从情感聊到死亡与哲学。最近听到一些分享，甚至有过被触动而流泪的时刻。</p>
+    <div class="tip" data-k="tipDeck">抽一张话题卡，想好答案来找我</div>
+    <div class="deck from-panel" id="deck"></div>
+    <p data-k="listen">比起观点一致，更在意我们<span class="wavy">是否愿意倾听和理解</span>。</p>
+    <div class="gap"></div>
+    <p data-k="where">目前在北京，未来可能考虑去深圳或嘉兴。台湾，日本，美国会短期出差。每次回来必带礼物，礼物可能会很小，但请不要觉得“苦”。见你的时候，我都是跑的。</p>
+    <div class="map">
+      <svg viewBox="0 0 300 150" preserveAspectRatio="none">
+        <path class="dash" d="M190 28 Q 230 70 205 95" fill="none" stroke="#c0573f" stroke-width="1.5"></path>
+        <path class="dash" d="M190 28 Q 120 80 140 128" fill="none" stroke="#c0573f" stroke-width="1.5"></path>
+      </svg>
+      <div class="city" style="left:63%;top:18%"><i></i><span data-k="cityNow">北京</span></div>
+      <div class="city q" style="left:68%;top:66%"><i></i><span data-k="cityA">嘉兴？</span></div>
+      <div class="city q" style="left:46%;top:86%"><i></i><span data-k="cityB">深圳？</span></div>
+      <div class="city q" style="left:20%;top:40%;color:var(--green)"><i style="background:var(--green)"></i><span data-k="cityYou">你在哪？</span></div>
+    </div>
+    <p class="small" data-k="plan">这是现阶段的个人规划。如果有了彼此，也愿意一起商量未来的生活方向。</p>
+    <span class="eggcat" id="cat">🐈</span>
+  </section>
+
+  <section class="paper">
+    <div class="rings"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <div class="pageno">P.02</div>
+    <h2 data-k="h2">关于想遇见的你</h2>
+    <p data-k="hope">不设年龄限制。希望你……</p>
+    <div class="tip" data-k="tipCheck">对照一下，是你就勾上</div>
+    <div class="check" id="check"><label><input type="checkbox"><span class="box"></span><span class="t" data-li="checks|0|0">真诚、善良</span></label><label><input type="checkbox"><span class="box"></span><span class="t" data-li="checks|1|0">有责任感</span></label><label><input type="checkbox"><span class="box"></span><span class="t" data-li="checks|2|0">有独立思考的能力</span></label><label><input type="checkbox"><span class="box"></span><span class="t" data-li="checks|3|0">对世界保持好奇</span></label><label><input type="checkbox"><span class="box"></span><span class="t" data-li="checks|4|0">愿意持续成长</span></label></div>
+    <div class="reward" id="reward"><span data-k="reward1">🎉 全勾上了？那我们大概会聊得来，翻到最后一页吧。</span></div>
+    <div class="gap"></div>
+    <p data-k="chat">希望遇见一个既能陪我长谈人生，也能陪我闲聊晚饭吃什么的人。可以一起聊哲学、社会、情感和各种有趣的话题，也可以分享每天那些看似不起眼的小事。</p>
+    <div class="kitchen">
+      <div class="scene">
+        <span>🧑‍🍳<span class="pan">🍳</span></span>
+        <span class="bubble from-panel" id="bubble" style="opacity: 1;">我跟你说个事……</span>
+        <span>🚪🙋</span>
+      </div>
+      <p class="small" style="margin-top:4px" data-k="kitchenP">做饭不好吃，但愿意瞎做，也愿意一起研究新菜谱。<span class="wavy">一个人在厨房忙活，另一个人站在厨房门口聊聊天</span>，听听今天发生了什么——我觉得这就是很好的生活。</p>
+      <div class="dish" id="dish"></div>
+      <button class="btn alt" id="cook"><span data-k="cookBtn">🎲 今晚瞎做点什么？</span></button>
+    </div>
+    <div class="polaroid big empty"><div class="ph empty" data-photo="life"></div><div class="cap" data-k="lifeC">照片说明</div></div>
+    <p data-k="tired">累了的时候，可以一起喝杯酒、围着炉火烤烤火，不必总是积极向上，也不必时刻证明自己。</p>
+    <div class="gap"></div>
+    <p data-k="goal">有目标的时候，为彼此加油；遇到困难的时候，相互扶持。</p>
+    <div class="switch from-panel" id="sw"><div class="knob"></div><span>🏔 诗和远方</span><span>🧺 眼前的苟且</span></div>
+    <div class="sw-out" id="swOut">既能一起奔赴诗和远方：徒步、旅行、去没去过的地方……</div>
+  </section>
+
+  <section class="paper">
+    <div class="rings"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <div class="pageno">P.03</div>
+    <h2 data-k="h3">关于感情</h2>
+    <p data-k="serious">我对感情比较认真，也有明确的原则。</p>
+    <div class="tip" data-k="tipRule">认同哪条，就点一下盖个章</div>
+    <div id="rules"><p class="rule">① <span data-li="rules|0|0">希望感情<span class="em">绝对忠诚</span>。这一点我可以做到，也希望你有同样的认知和坚守。</span><span class="stamp">我也<br>是</span></p><p class="rule">② <span data-li="rules|1|0">不期待完美的人，但希望彼此坦诚、专一，有问题愿意沟通，有困难愿意共同面对。</span><span class="stamp">我也<br>是</span></p><p class="rule">③ <span data-li="rules|2|0">尊重彼此的独立和空间，但既然选择了对方，就希望这份选择是坚定的。</span><span class="stamp">我也<br>是</span></p><p class="rule">④ <span data-li="rules|3|0">不急于定义关系，也不想为了完成某种人生任务而恋爱。希望从认识开始，慢慢了解，认真相处，最终成为彼此信任、依赖，也愿意长久陪伴的人。</span><span class="stamp">我也<br>是</span></p></div>
+    <div class="reward" id="reward2"><span data-k="reward2">章都盖满了 ❤️ 很高兴认识你。</span></div>
+  </section>
+
+  <section class="paper">
+    <div class="rings"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <div class="pageno">P.04</div>
+    <h2 data-k="h4">最后</h2>
+    <p data-k="last">希望我们既能谈论——</p>
+    <div class="switch from-panel" id="sw2"><div class="knob"></div><span>🌌 宇宙的尽头</span><span>🍜 今晚吃什么</span></div>
+    <div class="sw-out" id="sw2Out">聊聊宇宙的尽头是什么，时间有没有开始，我们为什么会在这里——</div>
+    <div class="quote"><p data-k="quote">可以一起努力成为更好的人，<br>也可以在彼此疲惫的时候，<br>不必成为更好的人。<br>不管发生什么，<br>我们的“小家”最大。</p></div>
+    <div class="polaroid big empty"><div class="ph empty" data-photo="end"></div><div class="cap" data-k="endC">照片说明</div></div>
+    <div class="end">
+      <button class="btn" id="meet"><span data-k="meetBtn">♡ 想认识一下</span></button>
+      <div class="contact" id="contact">
+        <div class="c" data-k="contact">私信我，暗号：「今晚吃什么」</div>
+        <p class="tip" style="margin-top:6px" data-k="contactTip">带上你抽到的话题卡答案会加分 :)</p>
+      </div>
+    </div>
+  </section>
+  <div class="foot" data-k="foot">· 慢慢看，慢慢聊 ·</div>
+</div>
+
+<script id="mode">window.EDIT = false;</script>
+<script id="state" type="application/json">{"text":{"coverTitle":"关于我，\u003cbr>也关于想遇见的你","coverSub":"一本可以点着玩的交友手账","coverHint":"轻点，翻开本子 →","h1":"关于我","intro":"有一份认真对待的工作，也有自己喜欢的生活。对新鲜事物始终保持好奇心，喜欢探索，也喜欢思考。以前喜欢手工制作，现在也会拿AI做了一些小物件，语音体或者个人小程序。纯属兴趣爱好， 介意请绕行。下面每张牌要不要 翻开看看？","tipTags":"翻开每张牌看看","g1c":"照片说明","g2c":"照片说明","g3c":"照片说明","persona":"性格独立，理性与感性并存，做事认真负责。底色善良。","mbtiNote":"这类测试只是某个阶段的性格画像，人在不同关系中，本来就会呈现不同的侧面。","talkP":"喜欢长谈，也喜欢听别人讲故事。话题可以从追星聊到人生，从情感聊到死亡与哲学。最近听到一些分享，甚至有过被触动而流泪的时刻。","tipDeck":"抽一张话题卡，想好答案来找我","listen":"比起观点一致，更在意我们\u003cspan class=\"wavy\">是否愿意倾听和理解\u003c/span>。","where":"目前在北京，未来可能考虑去深圳或嘉兴。台湾，日本，美国会短期出差。每次回来必带礼物，礼物可能会很小，但请不要觉得“苦”。见你的时候，我都是跑的。","cityNow":"北京","cityA":"嘉兴？","cityB":"深圳？","cityYou":"你在哪？","plan":"这是现阶段的个人规划。如果有了彼此，也愿意一起商量未来的生活方向。","h2":"关于想遇见的你","hope":"不设年龄限制。希望你……","tipCheck":"对照一下，是你就勾上","reward1":"🎉 全勾上了？那我们大概会聊得来，翻到最后一页吧。","chat":"希望遇见一个既能陪我长谈人生，也能陪我闲聊晚饭吃什么的人。可以一起聊哲学、社会、情感和各种有趣的话题，也可以分享每天那些看似不起眼的小事。","kitchenP":"做饭不好吃，但愿意瞎做，也愿意一起研究新菜谱。\u003cspan class=\"wavy\">一个人在厨房忙活，另一个人站在厨房门口聊聊天\u003c/span>，听听今天发生了什么——我觉得这就是很好的生活。","cookBtn":"🎲 今晚瞎做点什么？","lifeC":"照片说明","tired":"累了的时候，可以一起喝杯酒、围着炉火烤烤火，不必总是积极向上，也不必时刻证明自己。","goal":"有目标的时候，为彼此加油；遇到困难的时候，相互扶持。","h3":"关于感情","serious":"我对感情比较认真，也有明确的原则。","tipRule":"认同哪条，就点一下盖个章","reward2":"章都盖满了 ❤️ 很高兴认识你。","h4":"最后","last":"希望我们既能谈论——","quote":"可以一起努力成为更好的人，\u003cbr>也可以在彼此疲惫的时候，\u003cbr>不必成为更好的人。\u003cbr>不管发生什么，\u003cbr>我们的“小家”最大。","endC":"照片说明","meetBtn":"♡ 想认识一下","contact":"私信我，暗号：「今晚吃什么」","contactTip":"带上你抽到的话题卡答案会加分 :)","foot":"· 慢慢看，慢慢聊 ·"},"lists":{"profile":"年龄|40 岁\n性别|女 · *已出柜*\n婚姻|未婚，也没有结婚的打算\n坐标|北京","tags":"🐱|猫|你也是猫派吗？/先给我看看你的猫\n🏋️|健身|可以一起练，/也可以互相监督\n🥾|徒步|走着走着，/话就聊开了\n📖|阅读|告诉我你/最近在读什么\n✈️|旅行|下一站去哪，/可以一起商量\n✨|好奇心|对新鲜事物/永远想试试","topics":"追星|你追过的第一个人是谁？现在还喜欢吗？\n人生|如果能给十年前的自己留一句话，你会说什么？\n情感|你觉得被理解是一种什么样的感觉？\n哲学|你相信人有自由意志吗？\n死亡|如果只剩一年，你最想把时间花在哪里？\n小事|最近一件让你偷偷开心的小事是什么？\n故事|讲一个你很少跟别人讲的故事？\n社会|最近有什么新闻让你想了很久？\n好奇|最近一次“原来是这样！”是什么时候？\n流泪|上一次被什么打动到流泪？","checks":"真诚、善良\n有责任感\n有独立思考的能力\n对世界保持好奇\n愿意持续成长","talk":"今天怎么样？\n今天开会了吗？\n欸，你闻到糊味了吗\n我跟你说个事……\n这个盐放多少？\n好像……还挺好吃？\n明天换你做","dishes":"番茄炒蛋（但是甜口）\n可乐鸡翅，可乐可能放多了\n冰箱剩菜大乱炖\n照着视频做的红烧肉，结局未知\n两碗泡面 + 两个荷包蛋\n火锅，最不会失败的选择\n“创新菜”：名字吃完再起\n算了，点外卖吧 🛵","rules":"希望感情*绝对忠诚*。这一点我可以做到，也希望你有同样的认知和坚守。\n不期待完美的人，但希望彼此坦诚、专一，有问题愿意沟通，有困难愿意共同面对。\n尊重彼此的独立和空间，但既然选择了对方，就希望这份选择是坚定的。\n不急于定义关系，也不想为了完成某种人生任务而恋爱。希望从认识开始，慢慢了解，认真相处，最终成为彼此信任、依赖，也愿意长久陪伴的人。"},"fields":{"mbti1":"ENTJ","mbti1Txt":"一年前测的。/点一下看看现在 →","mbti2":"INTJ","mbti2Txt":"前两个月测的。/所以……人是会变的 ;)","sw1a":"🏔 诗和远方","sw1aTxt":"既能一起奔赴诗和远方：徒步、旅行、去没去过的地方……","sw1b":"🧺 眼前的苟且","sw1bTxt":"也能一起经营眼前的苟且：上班、买菜、交水电费、给猫铲屎。/~（两个都要，点来点去也没用 :）~","sw2a":"🌌 宇宙的尽头","sw2aTxt":"聊聊宇宙的尽头是什么，时间有没有开始，我们为什么会在这里——","sw2b":"🍜 今晚吃什么","sw2bTxt":"也能认真讨论今晚吃什么。/~（这个问题，可能比宇宙的尽头还难）~","stamp":"我也/是"},"photos":{}}</script>
+<script>
+/* ================= 默认内容 ================= */
+const DEFAULT = {
+  text: {
+    coverTitle:'关于我，<br>也关于想遇见的你', coverSub:'一本可以点着玩的交友手账', coverHint:'轻点，翻开本子 →',
+    h1:'关于我',
+    intro:'有一份认真对待的工作，也有自己喜欢的生活。对新鲜事物始终保持好奇心，喜欢探索，也喜欢思考。',
+    tipTags:'翻开每张牌看看',
+    g1c:'照片说明', g2c:'照片说明', g3c:'照片说明',
+    persona:'性格独立，理性与感性并存，做事认真负责。',
+    mbtiNote:'这类测试只是某个阶段的性格画像，人在不同关系中，本来就会呈现不同的侧面。',
+    talkP:'喜欢长谈，也喜欢听别人讲故事。话题可以从追星聊到人生，从情感聊到死亡与哲学。最近听到一些分享，甚至有过被触动而流泪的时刻。',
+    tipDeck:'抽一张话题卡，想好答案来找我',
+    listen:'比起观点一致，我更在意<span class="wavy">是否愿意倾听和理解</span>。',
+    where:'目前在北京，未来可能考虑去深圳或嘉兴。',
+    cityNow:'北京', cityA:'嘉兴？', cityB:'深圳？', cityYou:'你在哪？',
+    plan:'这是现阶段的个人规划。如果有了彼此，也愿意一起商量未来的生活方向。',
+    h2:'关于想遇见的你', hope:'不设年龄限制。希望你……', tipCheck:'对照一下，是你就勾上',
+    reward1:'🎉 全勾上了？那我们大概会聊得来，翻到最后一页吧。',
+    chat:'希望遇见一个既能陪我长谈人生，也能陪我闲聊晚饭吃什么的人。可以一起聊哲学、社会、情感和各种有趣的话题，也可以分享每天那些看似不起眼的小事。',
+    kitchenP:'做饭不好吃，但愿意瞎做，也愿意一起研究新菜谱。<span class="wavy">一个人在厨房忙活，另一个人站在厨房门口聊聊天</span>，听听今天发生了什么——我觉得这就是很好的生活。',
+    cookBtn:'🎲 今晚瞎做点什么？', lifeC:'照片说明',
+    tired:'累了的时候，可以一起喝杯酒、围着炉火烤烤火，不必总是积极向上，也不必时刻证明自己。',
+    goal:'有目标的时候，为彼此加油；遇到困难的时候，相互扶持。',
+    h3:'关于感情', serious:'我对感情比较认真，也有明确的原则。', tipRule:'认同哪条，就点一下盖个章',
+    reward2:'章都盖满了 ❤️ 很高兴认识你。',
+    h4:'最后', last:'希望我们既能谈论——',
+    quote:'可以一起努力成为更好的人，<br>也可以在彼此疲惫的时候，<br>不必成为更好的人，只需要在一起。',
+    endC:'照片说明', meetBtn:'♡ 想认识一下',
+    contact:'私信我，暗号：「今晚吃什么」', contactTip:'带上你抽到的话题卡答案会加分 :)',
+    foot:'· 慢慢看，慢慢聊 ·'
+  },
+  lists: {
+    profile:'年龄|40 岁\n性别|女 · *已出柜*\n婚姻|未婚，也没有结婚的打算\n坐标|北京',
+    tags:'🐱|猫|你也是猫派吗？/先给我看看你的猫\n🏋️|健身|可以一起练，/也可以互相监督\n🥾|徒步|走着走着，/话就聊开了\n📖|阅读|告诉我你/最近在读什么\n✈️|旅行|下一站去哪，/可以一起商量\n✨|好奇心|对新鲜事物/永远想试试',
+    topics:'追星|你追过的第一个人是谁？现在还喜欢吗？\n人生|如果能给十年前的自己留一句话，你会说什么？\n情感|你觉得被理解是一种什么样的感觉？\n哲学|你相信人有自由意志吗？\n死亡|如果只剩一年，你最想把时间花在哪里？\n小事|最近一件让你偷偷开心的小事是什么？\n故事|讲一个你很少跟别人讲的故事？\n社会|最近有什么新闻让你想了很久？\n好奇|最近一次“原来是这样！”是什么时候？\n流泪|上一次被什么打动到流泪？',
+    checks:'真诚、善良\n有责任感\n有独立思考的能力\n对世界保持好奇\n愿意持续成长',
+    talk:'今天怎么样？\n今天开会了吗？\n欸，你闻到糊味了吗\n我跟你说个事……\n这个盐放多少？\n好像……还挺好吃？\n明天换你做',
+    dishes:'番茄炒蛋（但是甜口）\n可乐鸡翅，可乐可能放多了\n冰箱剩菜大乱炖\n照着视频做的红烧肉，结局未知\n两碗泡面 + 两个荷包蛋\n火锅，最不会失败的选择\n“创新菜”：名字吃完再起\n算了，点外卖吧 🛵',
+    rules:'希望感情*绝对忠诚*。这一点我可以做到，也希望你有同样的认知和坚守。\n不期待完美的人，但希望彼此坦诚、专一，有问题愿意沟通，有困难愿意共同面对。\n尊重彼此的独立和空间，但既然选择了对方，就希望这份选择是坚定的。\n不急于定义关系，也不想为了完成某种人生任务而恋爱。希望从认识开始，慢慢了解，认真相处，最终成为彼此信任、依赖，也愿意长久陪伴的人。'
+  },
+  fields: {
+    mbti1:'ENTJ', mbti1Txt:'一年前测的。/点一下看看现在 →', mbti2:'INTJ', mbti2Txt:'前两个月测的。/所以……人是会变的 ;)',
+    sw1a:'🏔 诗和远方', sw1aTxt:'既能一起奔赴诗和远方：徒步、旅行、去没去过的地方……',
+    sw1b:'🧺 眼前的苟且', sw1bTxt:'也能一起经营眼前的苟且：上班、买菜、交水电费、给猫铲屎。/~（两个都要，点来点去也没用 :）~',
+    sw2a:'🌌 宇宙的尽头', sw2aTxt:'聊聊宇宙的尽头是什么，时间有没有开始，我们为什么会在这里——',
+    sw2b:'🍜 今晚吃什么', sw2bTxt:'也能认真讨论今晚吃什么。/~（这个问题，可能比宇宙的尽头还难）~',
+    stamp:'我也/是'
+  },
+  photos: {}
+};
+
+/* ================= 工具 ================= */
+const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
+const pick = a => a[Math.floor(Math.random()*a.length)];
+const esc = s => s.replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+// 面板里的小语法：*红字*  ~灰色小字~  / 换行
+const md = s => esc(s).replace(/\//g,'<br>').replace(/\*(.+?)\*/g,'<span class="em">$1</span>').replace(/~(.+?)~/g,'<span style="color:var(--mute);font-size:14px">$1</span>');
+const lines = k => S.lists[k].split('\n').map(x=>x.trim()).filter(Boolean);
+const parts = l => l.split('|').map(x=>x.trim());
+const KEY = 'jiaoyou-shouzhang-v1';
+let EDITING = window.EDIT;
+
+let S = JSON.parse(document.getElementById('state').textContent) ;
+if (window.EDIT) { try { S = JSON.parse(localStorage.getItem(KEY)) || S; } catch(e){} }
+S = merge(structuredClone(DEFAULT), S || {});
+function merge(base, over){ for (const g of ['text','lists','fields','photos']) Object.assign(base[g], (over && over[g]) || {}); return base; }
+
+function save(){
+  if (!window.EDIT) return;
+  try { localStorage.setItem(KEY, JSON.stringify(S)); }
+  catch(e){ toast('浏览器存储满了（照片太多/太大）——请先点「导出发布版」保存一份'); }
+}
+function toast(msg){ const t=document.createElement('div'); t.className='toast'; t.textContent=msg; document.body.appendChild(t); setTimeout(()=>t.remove(), 2600); }
+
+/* ================= 渲染 ================= */
+function renderText(){ $$('[data-k]').forEach(el => { if (document.activeElement !== el) el.innerHTML = S.text[el.dataset.k] ?? ''; }); }
+
+function renderPhotos(){
+  $$('[data-photo]').forEach(el => {
+    const src = S.photos[el.dataset.photo];
+    el.classList.toggle('empty', !src);
+    el.innerHTML = src ? '<img src="'+src+'" alt=""><span class="x" title="删除">✕</span>' : '';
+    const pol = el.closest('.polaroid'); if (pol) pol.classList.toggle('empty', !src);
+  });
+}
+
+let mbtiNew = false, deckOrder = [], deckI = 0, talkI = 0;
+function renderDynamic(){
+  $('#profile').innerHTML = lines('profile').map((l,i) => { const [a,b=''] = parts(l); return '<span class="l" data-li="profile|'+i+'|0">'+md(a)+'</span><span data-li="profile|'+i+'|1">'+md(b)+'</span>'; }).join('');
+  $('#tags').innerHTML = lines('tags').map((l,i) => { const [e,n='',b=''] = parts(l);
+    return '<div class="flip"><div class="in"><div class="f"><em>'+esc(e)+'</em><span data-li="tags|'+i+'|1">'+md(n)+'</span></div><div class="b"><span data-li="tags|'+i+'|2">'+md(b)+'</span></div></div></div>'; }).join('');
+  $$('.flip').forEach(f => f.onclick = e => { if (EDITING && e.target.closest('[data-li]')) return; f.classList.toggle('on'); });
+  renderMbti();
+  const tp = lines('topics'); deckOrder = [...tp].sort(()=>Math.random()-.5); deckI = 0;
+  $('#deck').innerHTML = ''; drawCard(true);
+  const ch = lines('checks');
+  $('#check').innerHTML = ch.map((t,i) => '<label><input type="checkbox"><span class="box"></span><span class="t" data-li="checks|'+i+'|0">'+md(t)+'</span></label>').join('');
+  $$('#check label').forEach(l => l.onclick = e => { if (EDITING && e.target.closest('[data-li]')) e.preventDefault(); });
+  const boxes = $$('#check input'); $('#reward').classList.remove('on');
+  boxes.forEach(b => b.onchange = () => $('#reward').classList.toggle('on', boxes.every(x=>x.checked)));
+  $('#bubble').textContent = lines('talk')[0] || '';
+  $('#rules').innerHTML = lines('rules').map((t,i) => '<p class="rule">'+'①②③④⑤⑥⑦⑧⑨⑩'[i % 10]+' <span data-li="rules|'+i+'|0">'+md(t)+'</span><span class="stamp">'+md(S.fields.stamp)+'</span></p>').join('');
+  const rules = $$('.rule'); $('#reward2').classList.remove('on');
+  rules.forEach(r => r.onclick = e => { if (EDITING && e.target.closest('[data-li]')) return; r.classList.toggle('on'); $('#reward2').classList.toggle('on', rules.every(x=>x.classList.contains('on'))); });
+  renderSwitch('#sw','#swOut','sw1'); renderSwitch('#sw2','#sw2Out','sw2');
+  if (EDITING) $$('[data-li]').forEach(el => el.setAttribute('contenteditable','true'));
+}
+// 页面上的 HTML 转回面板里的小语法
+function unmd(h){
+  const d = document.createElement('div'); d.innerHTML = h.replace(/<br\s*\/?>/gi, '/');
+  d.querySelectorAll('span.em').forEach(s => s.replaceWith('*'+s.textContent+'*'));
+  d.querySelectorAll('span[style]').forEach(s => s.replaceWith('~'+s.textContent+'~'));
+  return d.textContent.replace(/\|/g,'｜').replace(/\n/g,'');
+}
+function renderMbti(){
+  const a = S.fields.mbti1, b = S.fields.mbti2, cur = mbtiNew ? b : a, oth = mbtiNew ? a : b;
+  $('#mbti').innerHTML = [...cur].map((c,i) => c !== oth[i] ? '<b>'+esc(c)+'</b>' : esc(c)).join('');
+  $('#mbtiTxt').innerHTML = md(mbtiNew ? S.fields.mbti2Txt : S.fields.mbti1Txt);
+}
+const swState = {};
+function renderSwitch(id, outId, k){
+  const sw = $(id), sp = sw.querySelectorAll('span'), r = !!swState[k];
+  sp[0].textContent = S.fields[k+'a']; sp[1].textContent = S.fields[k+'b'];
+  sw.classList.toggle('r', r); $(outId).innerHTML = md(S.fields[k + (r?'bTxt':'aTxt')]);
+  sw.onclick = () => { swState[k] = !r; renderSwitch(id, outId, k); };
+}
+function drawCard(first){
+  const deck = $('#deck'), old = deck.querySelector('.card:not(.out)');
+  const c = document.createElement('div'); c.className = 'card';
+  if (first || !deckOrder.length) c.innerHTML = '<div class="k">话题卡 · 共 '+deckOrder.length+' 张</div><div class="q">点我抽一张 →</div>';
+  else { const [k,q=''] = parts(deckOrder[deckI++ % deckOrder.length]); c.innerHTML = '<div class="k">#'+esc(k)+'</div><div class="q">'+md(q)+'</div>'; }
+  deck.appendChild(c);
+  if (old){ old.classList.add('out'); setTimeout(()=>old.remove(),450); }
+}
+function renderAll(){ renderText(); renderPhotos(); renderDynamic(); }
+
+/* ================= 互动 ================= */
+$('#book').onclick = e => {
+  if (EDITING) {
+    if (e.target.closest('[data-k], [data-photo]')) return;   // 点字/照片 = 编辑
+    window.toPreview && window.toPreview();                     // 点空白 = 切到预览并翻开
+  }
+  requestAnimationFrame(() => { $('#cover').classList.add('open','gone'); setTimeout(reveal, 600); });
+};
+const io = new IntersectionObserver(es => es.forEach(e => e.isIntersecting && e.target.classList.add('show')), {threshold:.05});
+function reveal(){ $$('.paper').forEach(p => { io.unobserve(p); io.observe(p); }); }
+$('#mbti').onclick = () => { mbtiNew = !mbtiNew; const c=$('#mbti'); c.classList.add('spin'); setTimeout(()=>c.classList.remove('spin'),400); renderMbti(); };
+$('#deck').onclick = () => drawCard(false);
+setInterval(() => { const t = lines('talk'); if (!t.length) return; const b=$('#bubble'); b.style.opacity=0; setTimeout(()=>{ b.textContent = t[++talkI % t.length]; b.style.opacity=1; },300); }, 2600);
+$('#cook').onclick = () => { if (EDITING && document.activeElement.closest('#cook')) return; const d = lines('dishes'); let n=0; const t=setInterval(()=>{ $('#dish').textContent = pick(d); if(++n>10) clearInterval(t); },70); };
+let pets = 0; $('#cat').onclick = e => { hearts(e.clientX,e.clientY,1); if(++pets===5) $('#cat').textContent='😻'; };
+$('#meet').onclick = e => { $('#contact').classList.add('on'); hearts(e.clientX,e.clientY,10); };
+function hearts(x,y,n){ for(let i=0;i<n;i++){ const h=document.createElement('div'); h.className='heart'; h.textContent=pick(['♡','❤️','🧡','💛']);
+  h.style.left=(x-10+(Math.random()-.5)*80)+'px'; h.style.top=(y-10)+'px'; h.style.animationDelay=(i*60)+'ms'; document.body.appendChild(h); setTimeout(()=>h.remove(),1400+i*60); } }
+
+renderAll();
+
+/* ================= 编辑器（只在编辑器文件里出现，导出后会被移除） ================= */
+if (window.EDIT) {
+  const bar = document.createElement('div'); bar.className = 'ed-bar ed';
+  bar.innerHTML = '<b>✏️ 编辑模式 · 虚线框里的字直接点着改</b><button id="edToggle">👀 预览效果</button><button id="edPanelBtn">📋 卡片/列表内容</button><button class="pri" id="edExport">💾 导出发布版</button><button id="edReset">↺ 恢复默认</button>';
+  document.body.appendChild(bar);
+  const file = document.createElement('input'); file.type='file'; file.accept='image/*'; file.className='ed'; file.style.display='none'; document.body.appendChild(file);
+
+  // 面板
+  const P = [
+    ['guide'],
+    ['list','profile','档案卡','每行一项：标题|内容'],
+    ['list','tags','兴趣翻牌','每行一张：表情|名字|背面的话（/ 换行）'],
+    ['row','mbti1','MBTI（之前）','mbti1Txt','旁边小字'],
+    ['row','mbti2','MBTI（现在）','mbti2Txt','旁边小字'],
+    ['list','topics','话题卡','每行一张：标签|问题'],
+    ['list','checks','“想遇见的你”勾选清单','每行一条'],
+    ['list','talk','厨房门口的对话气泡','每行一句，会轮流出现'],
+    ['list','dishes','“今晚瞎做点什么”菜单','每行一道，随机抽'],
+    ['row','sw1a','开关①左边','sw1b','开关①右边'],
+    ['field','sw1aTxt','开关①左边的文字'], ['field','sw1bTxt','开关①右边的文字'],
+    ['list','rules','感情原则（可盖章）','每行一条'],
+    ['field','stamp','印章上的字'],
+    ['row','sw2a','开关②左边','sw2b','开关②右边'],
+    ['field','sw2aTxt','开关②左边的文字'], ['field','sw2bTxt','开关②右边的文字'],
+  ];
+  const panel = document.createElement('div'); panel.className='ed-panel ed';
+  panel.innerHTML = P.map(([t,k,l,k2,l2]) => {
+    if (t==='guide') return '<div class="guide"><b>怎么用</b><br>· 页面上虚线框的文字：直接点进去改<br>· 照片位：点一下选照片，右上角 ✕ 删除<br>· 档案卡、兴趣牌（翻过来也能改背面）、清单、原则：页面上直接改，这里会同步<br>· 话题卡、对话气泡、开关、MBTI 等：在这里改（页面上绿色虚线区域）<br>· 想<b>增加/删除</b>条目：在这里加一行或删一行<br>· 小语法：<code>*红字*</code>　<code>~灰色小字~</code>　<code>/</code> 换行<br>· 自动保存在本浏览器；改完点「导出发布版」</div>';
+    if (t==='list') return '<h4>'+l+'</h4><div class="hint">'+k2+'</div><textarea data-list="'+k+'" rows="'+Math.min(10, S.lists[k].split('\n').length+1)+'"></textarea>';
+    if (t==='field') return '<h4>'+l+'</h4><input data-field="'+k+'">';
+    return '<div class="row"><div><h4>'+l+'</h4><input data-field="'+k+'"></div><div><h4>'+l2+'</h4><input data-field="'+k2+'"></div></div>';
+  }).join('');
+  document.body.appendChild(panel);
+  const fillPanel = () => { panel.querySelectorAll('[data-list]').forEach(t => t.value = S.lists[t.dataset.list]); panel.querySelectorAll('[data-field]').forEach(t => t.value = S.fields[t.dataset.field]); };
+  fillPanel();
+  panel.addEventListener('input', e => {
+    const t = e.target;
+    if (t.dataset.list) S.lists[t.dataset.list] = t.value;
+    if (t.dataset.field) S.fields[t.dataset.field] = t.value;
+    renderDynamic(); save();
+  });
+  $('#edPanelBtn').onclick = () => { panel.classList.toggle('on'); document.body.classList.toggle('panel-on', panel.classList.contains('on')); };
+
+  // 行内编辑
+  function setEditable(on){
+    $$('[data-k], [data-li]').forEach(el => on ? el.setAttribute('contenteditable','true') : el.removeAttribute('contenteditable'));
+  }
+  document.addEventListener('input', e => {
+    if (!EDITING || !e.target.closest) return;
+    const el = e.target.closest('[data-k]'); if (el){ S.text[el.dataset.k] = el.innerHTML; save(); return; }
+    const li = e.target.closest('[data-li]'); if (!li) return;
+    const [k,i,p] = li.dataset.li.split('|'), arr = lines(k).map(parts);
+    while (arr[+i].length <= +p) arr[+i].push('');
+    arr[+i][+p] = unmd(li.innerHTML);
+    S.lists[k] = arr.map(a => a.join('|')).join('\n');
+    fillPanel(); save();
+  });
+  document.addEventListener('paste', e => { if (!EDITING || !e.target.closest('[data-k], [data-li]')) return; e.preventDefault(); document.execCommand('insertText', false, (e.clipboardData||window.clipboardData).getData('text/plain')); });
+  document.addEventListener('keydown', e => { if (EDITING && e.key==='Enter' && e.target.closest('[data-k], [data-li]')) { e.preventDefault(); document.execCommand('insertLineBreak'); } });
+  // 编辑时：按钮里的字点了只编辑，不触发按钮
+  ['#meet','#cook'].forEach(s => $(s).addEventListener('click', e => { if (EDITING) e.stopImmediatePropagation(); }, true));
+
+  // 照片
+  let target = null;
+  document.addEventListener('click', e => {
+    if (!EDITING) return;
+    const ph = e.target.closest('[data-photo]'); if (!ph) return;
+    e.stopPropagation();
+    if (e.target.classList.contains('x')) { delete S.photos[ph.dataset.photo]; renderPhotos(); save(); return; }
+    target = ph.dataset.photo; file.value=''; file.click();
+  }, true);
+  file.onchange = () => { const f = file.files[0]; if (!f) return;
+    const fr = new FileReader(); fr.onload = () => { const im = new Image(); im.onload = () => {
+      const m = 1100, s = Math.min(1, m/Math.max(im.width, im.height)), c = document.createElement('canvas');
+      c.width = Math.round(im.width*s); c.height = Math.round(im.height*s); c.getContext('2d').drawImage(im,0,0,c.width,c.height);
+      S.photos[target] = c.toDataURL('image/jpeg', .82); renderPhotos(); save(); toast('照片已放好');
+    }; im.src = fr.result; }; fr.readAsDataURL(f); };
+
+  // 预览 / 编辑切换
+  function setMode(edit){
+    EDITING = edit; document.body.classList.toggle('editing', edit); setEditable(edit);
+    $('#edToggle').textContent = edit ? '👀 预览效果' : '✏️ 回去编辑';
+    bar.querySelector('b').textContent = edit ? '✏️ 编辑模式 · 虚线框里的字直接点着改' : '👀 预览中 · 别人看到的就是这样';
+    $('#cover').classList.remove('open','gone'); $$('.paper').forEach(p => p.classList.remove('show'));
+    if (!edit) { panel.classList.remove('on'); document.body.classList.remove('panel-on'); }
+    window.scrollTo(0,0);
+  }
+  $('#edToggle').onclick = () => setMode(!EDITING);
+  window.toPreview = () => setMode(false);
+  const coverTip = document.createElement('div'); coverTip.className = 'ed';
+  coverTip.style.cssText = 'text-align:center;font-size:13px;color:#9b9183;margin-top:-18px;margin-bottom:10px;font-family:system-ui,"Microsoft YaHei",sans-serif';
+  coverTip.textContent = '↑ 点封面上的字可以改；点封面空白处 = 预览翻开效果';
+  $('#cover').after(coverTip);
+  const _setMode = setMode;
+  setMode = edit => { _setMode(edit); coverTip.style.display = edit ? '' : 'none'; };
+  setMode(true);
+
+  // 恢复默认
+  $('#edReset').onclick = () => { if (!confirm('确定恢复成默认文字吗？你改过的内容和放的照片都会清空。（建议先导出一份）')) return;
+    S = structuredClone(DEFAULT); localStorage.removeItem(KEY); fillPanel(); renderAll(); toast('已恢复默认'); };
+
+  // 导出
+  $('#edExport').onclick = () => {
+    const doc = document.documentElement.cloneNode(true);
+    doc.querySelectorAll('.ed, .heart, .toast').forEach(n => n.remove());
+    doc.querySelectorAll('[contenteditable]').forEach(n => n.removeAttribute('contenteditable'));
+    doc.querySelectorAll('.show,.open,.gone,.on').forEach(n => n.classList.remove('show','open','gone','on'));
+    const body = doc.querySelector('body'); body.className=''; body.removeAttribute('style');
+    doc.querySelector('#deck').innerHTML = '';
+    doc.querySelector('#mode').textContent = 'window.EDIT = false;';
+    doc.querySelector('#state').textContent = JSON.stringify(S).replace(/</g,'\\u003c');
+    const blob = new Blob(['<!DOCTYPE html>\n' + doc.outerHTML], {type:'text/html'});
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = '我的交友手账.html'; a.click();
+    setTimeout(()=>URL.revokeObjectURL(a.href), 2000);
+    toast('已导出「我的交友手账.html」，在下载文件夹里');
+  };
+}
+</script>
+
+
+</body></html>
